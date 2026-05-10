@@ -1,2 +1,10 @@
-# distributed-cache-simulator
-a distributed request simulation platform modeling load balancing, caching, retry handling, and server failure recovery using Python.
+# Distributed Cache Simulator
+
+A systems-focused backend simulation project exploring:
+- request routing
+- caching
+- load balancing
+- retry logic
+- distributed systems concepts
+
+Built in Python.
