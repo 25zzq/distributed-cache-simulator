@@ -13,7 +13,7 @@ class Request():
         self.processing_time_ms = processing_time_ms
         self.retry_count = retry_count
     
-    # can_retry and retry will recursively call each other until max retries are met
+    # retry will recursively call can_retry until max retries are met
     def can_retry(self):
         #checks if a request has exceeded it's retry count and creates a boolean that will be used for the retry function
         if self.retry_count >= self.max_retries:
