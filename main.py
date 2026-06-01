@@ -1,7 +1,8 @@
 from src.request import Request
-from src.requestqueue import RequestQueue
-
-requestorder = RequestQueue()
+from src.requestqueue import RequestQueue as Queue
+from src.server import Server
+bigahhserver = Server(0.0, 2)
+requestorder = Queue()
 def main():
     print("Distributed Cache Simulator starting...")
     testrequest = Request(
@@ -19,31 +20,22 @@ def main():
         payload={"john": 123}, 
         max_retries=3, status="Sending")
     
+    #testing out the server's functionality
     requestorder.enqueue(testrequest)
-    print(requestorder.requests)
     requestorder.enqueue(testrequest2)
-    print(requestorder.requests)
     requestorder.enqueue(testrequest3)
-    print(requestorder.requests)
 
-    removed_Request = requestorder.dequeue()
-    print(f'{removed_Request.endpoint}')
+    print(testrequest.status)
+    print(testrequest2.status)
+    print(testrequest3.status)
+
+    bigahhserver.process_queue(requestorder)
+
     
 
-
-
-
-
-
-
-    testrequest.retry()
-
     print(testrequest.status)
-    print(testrequest.retry_count)
-
-    testrequest.mark_completed()
-
-    print(testrequest.status)
+    print(testrequest2.status)
+    print(testrequest3.status)
 
 
 if __name__ == "__main__":

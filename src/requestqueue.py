@@ -6,12 +6,15 @@ class RequestQueue():
 
     def enqueue(self, request):
         ## adds item to a queue
-        self.requests.append(request)
+        self.requests.append(request) #O(1) complexity
 
         
 
     def dequeue(self):
         #removes item from the queue(either request timed out or request successfully processed)
-        return self.requests.pop(0)
+        return self.requests.pop(0)  #O(n) Complexity
 
+    def is_empty(self):
+        return len(self.requests) == 0
+    
         

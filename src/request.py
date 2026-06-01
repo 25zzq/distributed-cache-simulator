@@ -2,7 +2,7 @@ from uuid import uuid4
 
 class Request():
 
-    def __init__(self, endpoint, payload, max_retries, status, processing_time_ms = 120, retry_count = 0, request_id = None):
+    def __init__(self, endpoint, payload, max_retries, status = "Processing...", processing_time_ms = 120, retry_count = 0, request_id = None):
         self.request_id = request_id
         if self.request_id == None:
             self.request_id = uuid4()
