@@ -24,7 +24,7 @@ class Server:
     def process_request(self, request):
         if self.can_process():
             request.mark_completed()
-            self.requests_processed =+ 1
+            self.requests_processed += 1
         else:
             pass
     
