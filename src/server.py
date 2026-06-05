@@ -1,5 +1,5 @@
 from uuid import uuid4 as randomid
-
+from random import random
 
 class Server:
 # basic s
@@ -23,8 +23,11 @@ class Server:
 
     def process_request(self, request):
         if self.can_process():
-            request.mark_completed()
-            self.requests_processed += 1
+            if random(0,1) > self.fail_likelihood:
+                request.retry()
+            else:
+                request.mark_completed()
+                requests_processed += 1
         else:
             pass
     
@@ -35,6 +38,8 @@ class Server:
             self.process_request(queue.requests[0])
             queue.dequeue()
             return self.process_queue(queue)
+
+
 
 
 

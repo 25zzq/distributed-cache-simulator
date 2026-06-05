@@ -7,6 +7,7 @@ class RequestQueue():
     def enqueue(self, request):
         ## adds item to a queue
         self.requests.append(request) #O(1) complexity
+        request.status = "Processing..."
 
         
 
