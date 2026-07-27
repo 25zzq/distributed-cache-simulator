@@ -79,11 +79,11 @@ def main():
 
     
 
-    bigahhserver.process_queue(requestorder)
+    Server.process_queue(requestorder)
 
     
-    print(bigahhserver.requests_processed)
-    print(bigahhserver.processing_attempts)
+    print(Server.requests_processed)
+    print(Server.processing_attempts)
 
 
 if __name__ == "__main__":
