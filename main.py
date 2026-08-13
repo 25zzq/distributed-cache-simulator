@@ -79,11 +79,11 @@ def main():
 
     
 
-    Server.process_queue(requestorder)
+    server.process_queue(requestorder)
 
     
-    print(Server.requests_processed)
-    print(Server.processing_attempts)
+    print(server.requests_processed)
+    print(server.processing_attempts)
 
 
 if __name__ == "__main__":
