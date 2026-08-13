@@ -3,7 +3,7 @@ from random import random
 
 class Server:
 # basic s
-    def __init__(self, fail_likelihood, processing_speed, cache=dict, processing_attempts = 0, server_id = None, online = True, requests_processed = 0):
+    def __init__(self, fail_likelihood, processing_speed, cache={}, processing_attempts = 0, server_id = None, online = True, requests_processed = 0):
         self.server_id = server_id
         if server_id == None:
             self.server_id = randomid()
