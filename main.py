@@ -8,7 +8,7 @@ def main():
     testrequest = Request(
         endpoint="/get-user",
         payload={"dave": 123}, 
-        max_retries=3, status="Sending")\
+        max_retries=3, status="Sending")
 
     testrequest2 = Request(
         endpoint="/add-user",
