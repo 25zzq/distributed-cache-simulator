@@ -33,7 +33,7 @@ class Server:
             if random() < self.fail_likelihood:
                 request.retry()
             else:
-                self.cache[request.endpoint]  
+                self.cache[request.endpoint] = 1
                 request.mark_completed()
                 self.requests_processed += 1
                 self.processing_attempts += 1
