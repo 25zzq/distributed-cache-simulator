@@ -1,0 +1,37 @@
+{
+  "jobs": [
+    {
+      "id": "sample-northwind",
+      "company": "Northwind Labs",
+      "title": "Software Engineering Intern",
+      "location": "Austin, TX or Remote",
+      "url": "https://example.com/jobs/northwind-intern",
+      "apply_email": "internships@northwind.example",
+      "description": "Summer internship for computer science students. You will write Python and SQL. Coursework in data structures and algorithms is useful. Software engineering internship. 0-1 years of experience is fine."
+    },
+    {
+      "id": "sample-contoso",
+      "company": "Contoso",
+      "title": "Backend Intern",
+      "location": "Remote",
+      "url": "https://example.com/jobs/contoso-intern",
+      "description": "Internship building internal tools with Python. Send your resume to jobs@contoso.example if you are a student."
+    },
+    {
+      "id": "sample-fabrikam",
+      "company": "Fabrikam",
+      "title": "Senior Software Engineer",
+      "location": "Seattle, WA",
+      "url": "https://example.com/jobs/fabrikam-senior",
+      "description": "Requires 5+ years of professional experience leading production systems."
+    },
+    {
+      "id": "sample-litware",
+      "company": "Litware",
+      "title": "Marketing Intern",
+      "location": "Remote",
+      "url": "https://example.com/jobs/litware-marketing",
+      "description": "Internship supporting social campaigns, copywriting, and event planning."
+    }
+  ]
+}

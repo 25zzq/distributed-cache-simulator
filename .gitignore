@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Private internship assistant data (profile, resume, mailbox, applications)
+/data/
+google-service-account.json

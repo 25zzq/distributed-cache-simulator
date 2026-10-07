@@ -1,0 +1,37 @@
+{
+  "auto_apply_email": false,
+  "min_match_score": 40,
+  "daily_apply_cap": 8,
+  "require_intern_signal": true,
+  "exclude_title_keywords": ["senior", "staff", "principal", "director", "vp", "vice president", "head of"],
+  "listings_file": "data/listings.json",
+  "json_feeds": [],
+  "rss_feeds": [],
+  "boards": {
+    "greenhouse": [],
+    "lever": [],
+    "ashby": []
+  },
+  "google_sheet": {
+    "spreadsheet_id": "",
+    "credentials_path": "data/google-service-account.json",
+    "worksheet": "Applications"
+  },
+  "imap": {
+    "host": "imap.gmail.com",
+    "port": 993,
+    "username": "",
+    "password_env": "IMAP_PASSWORD",
+    "folder": "INBOX",
+    "since_days": 21
+  },
+  "smtp": {
+    "host": "smtp.gmail.com",
+    "port": 587,
+    "username": "",
+    "password_env": "SMTP_PASSWORD",
+    "from_email": ""
+  },
+  "data_dir": "data",
+  "profile_path": "data/profile.json"
+}

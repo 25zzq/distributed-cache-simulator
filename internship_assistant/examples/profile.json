@@ -1,0 +1,41 @@
+{
+  "example": true,
+  "needs_review": true,
+  "full_name": "Your Name",
+  "first_name": "Your",
+  "last_name": "Name",
+  "email": "you@example.com",
+  "phone": "",
+  "location": "Austin, TX",
+  "willing_to_relocate": true,
+  "willing_remote": true,
+  "preferred_locations": ["Austin", "Remote"],
+  "work_authorization": "",
+  "needs_sponsorship": null,
+  "school": "Your University",
+  "degree": "B.S.",
+  "major": "Computer Science",
+  "graduation_date": "2027-05",
+  "gpa": null,
+  "start_date": "2026-05",
+  "term": "Summer 2026",
+  "links": {
+    "github": "",
+    "linkedin": "",
+    "portfolio": ""
+  },
+  "skills": ["Python", "Java", "SQL"],
+  "coursework": ["Data Structures", "Algorithms", "Computer Systems"],
+  "projects": [
+    {
+      "name": "Course project name",
+      "description": "what you built, in one or two sentences, using only what you actually did",
+      "technologies": ["Python"],
+      "url": ""
+    }
+  ],
+  "experience": [],
+  "interests": ["software engineering"],
+  "resume_path": "data/resume.pdf",
+  "saved_answers": []
+}

@@ -1,3 +1,5 @@
+A private internship search tool is in [`internship_assistant/`](internship_assistant/README.md). It matches listings to a resume you keep on this machine, fills applications from those facts, logs every application, and checks your inbox for replies.
+
 ### 1. `Request` (Data Serialization & Lifecycle State Machine)
 Tracks independent transaction profiles using unique session identification (`UUID4`). Encapsulates localized state transformations across four explicit milestones:
 * 🔵 `Sending`: Packet initialization and dispatch.
