@@ -77,11 +77,21 @@ The same rows are always written to `data/applications.csv`. To also update a Go
 
 ## Daily use
 
+Open the dashboard, edit your profile or listings, and press Run search whenever you want another pass:
+
+```bash
+python3 -m internship_assistant dashboard
+```
+
+That starts a private page at http://127.0.0.1:8765. It does not accept connections from other computers. The same page lets you change the resume profile, add or edit listings, change the match score and email cap, read each filled packet, and set a status after you submit a form or hear back.
+
+The command line does the same pass without the page:
+
 ```bash
 python3 -m internship_assistant run
 ```
 
-That pass reads listings, scores them, writes packets in `data/packets/`, sends allowed emails, checks the inbox, updates the CSV and Google Sheet, and prints the counts. Open `data/report.html` for the same numbers.
+Either one reads listings, scores them, writes packets in `data/packets/`, sends allowed emails, checks the inbox, and updates the CSV and Google Sheet.
 
 ```bash
 python3 -m internship_assistant stats

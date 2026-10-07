@@ -80,7 +80,7 @@ def init_workspace(root: Path | None = None) -> str:
     return (
         "Private workspace is in ./data (gitignored).\n"
         "Edit data/profile.json with your real resume facts, put your resume file on resume_path,\n"
-        "then run: python3 -m internship_assistant run"
+        "then open the dashboard: python3 -m internship_assistant dashboard"
     )
 
 
@@ -148,7 +148,18 @@ def _inbox(config: AppConfig, now: datetime):
     return messages, f"Read {len(messages)} recent inbox messages."
 
 
-def run_once(config: AppConfig, *, check_inbox: bool = True) -> int:
+def _public_summary(summary: dict) -> dict:
+    cleaned = {}
+    for key, value in summary.items():
+        if isinstance(value, list):
+            cleaned[key] = [list(item) if isinstance(item, tuple) else item for item in value]
+        else:
+            cleaned[key] = value
+    return cleaned
+
+
+def execute_search(config: AppConfig, *, check_inbox: bool = True) -> dict:
+    """Run one search and return the counts the dashboard and CLI both show."""
     profile = load_profile(config.profile_path)
     now = datetime.now().astimezone()
     client = UrlLibClient()
@@ -193,19 +204,35 @@ def run_once(config: AppConfig, *, check_inbox: bool = True) -> int:
         )
         sheet_note = sync_trackers(config, store)
         report = _write_reports(config, store)
+        summary = _public_summary(summarize(store.list_applications(), store.count_seen()))
     finally:
         store.close()
-    print(inbox_note)
+    return {
+        "discovered": result.discovered,
+        "new_applications": result.new_applications,
+        "sent": result.sent,
+        "inbox_note": inbox_note,
+        "inbox_updates": result.inbox_updates,
+        "errors": errors + result.errors,
+        "sheet_note": sheet_note,
+        "summary": summary,
+        "report": report,
+    }
+
+
+def run_once(config: AppConfig, *, check_inbox: bool = True) -> int:
+    payload = execute_search(config, check_inbox=check_inbox)
+    print(payload["inbox_note"])
     print(
-        f"Seen {result.discovered} listings, prepared {result.new_applications} new applications, "
-        f"emailed {result.sent}."
+        f"Seen {payload['discovered']} listings, prepared {payload['new_applications']} new applications, "
+        f"emailed {payload['sent']}."
     )
-    for error in errors + result.errors:
+    for error in payload["errors"]:
         print(f"Error: {error}")
-    for update in result.inbox_updates:
+    for update in payload["inbox_updates"]:
         print(f"Inbox update: {update}")
-    print(sheet_note)
-    print(report)
+    print(payload["sheet_note"])
+    print(payload["report"])
     return 0
 
 
@@ -230,6 +257,11 @@ def build_parser() -> argparse.ArgumentParser:
     importer.add_argument("resume_text")
     importer.add_argument("--force", action="store_true")
 
+    dashboard = sub.add_parser("dashboard", help="Open the local page for editing your search and running it")
+    dashboard.add_argument("--host", default="127.0.0.1")
+    dashboard.add_argument("--port", type=int, default=8765)
+    dashboard.add_argument("--no-open", action="store_true", help="Do not open a browser window")
+
     watch = sub.add_parser("watch", help="Keep running the search on an interval")
     watch.add_argument("--interval", type=int, default=3600)
     watch.add_argument("--cycles", type=int, default=0, help="Stop after this many passes. 0 runs until you quit.")
@@ -244,6 +276,18 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     config_path = Path(args.config)
+    if args.command == "dashboard":
+        from internship_assistant.dashboard import serve_dashboard
+
+        if args.host not in {"127.0.0.1", "localhost", "::1"}:
+            print("The dashboard stays on this computer. Use 127.0.0.1.")
+            return 1
+        if not config_path.is_file():
+            root = config_path.parent.parent if config_path.parent.name == "data" else Path.cwd()
+            init_workspace(root)
+        serve_dashboard(args.host, args.port, config_path, open_browser=not args.no_open)
+        return 0
+
     if not config_path.is_file():
         print("No config yet. Run: python3 -m internship_assistant init")
         return 1

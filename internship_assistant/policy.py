@@ -20,7 +20,9 @@ def decide(
     if not resume_exists:
         blockers.append("Add your resume file at resume_path before sending.")
     if profile_is_placeholder(profile):
-        blockers.append("Replace the sample profile, then set example and needs_review to false.")
+        blockers.append(
+            "Sending stays off until this profile has your real name and email, and the sample and review checkboxes are cleared."
+        )
     if job.apply_email and is_example_address(job.apply_email):
         blockers.append("This listing uses an example.com address, so it was not emailed.")
     if blockers:

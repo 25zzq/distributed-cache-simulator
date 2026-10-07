@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internship search</title>
+<style>
+:root {
+  --ink: #1c1915;
+  --muted: #5f584e;
+  --paper: #f3efe6;
+  --card: #fffdf9;
+  --line: #e3d9cb;
+  --accent: #0d6b52;
+  --accent-dark: #0a5440;
+  --warn: #8a4b08;
+  --warn-bg: #fff3d8;
+  --danger: #8d2f2f;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font: 16px/1.45 "Segoe UI", "Helvetica Neue", sans-serif;
+}
+header, nav, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+h1 { margin: 0; font-size: 1.45rem; font-weight: 650; letter-spacing: -0.02em; }
+.eyebrow { margin: 0 0 0.15rem; color: var(--muted); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: 0.7; }
+.primary, .secondary, .ghost, .danger {
+  border-radius: 6px;
+  padding: 0.55rem 0.9rem;
+}
+.primary { background: var(--accent); color: white; border: 0; font-weight: 650; }
+.primary:hover { background: var(--accent-dark); }
+.secondary, .ghost { background: white; border: 1px solid var(--line); }
+.danger { background: white; color: var(--danger); border: 1px solid #efc7c7; }
+nav {
+  display: flex;
+  gap: 0.25rem;
+  padding-top: 0.75rem;
+  background: var(--paper);
+  position: sticky;
+  top: 0;
+}
+nav button {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 0.55rem 0.75rem;
+  color: var(--muted);
+}
+nav button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 650; }
+main { padding-top: 1rem; padding-bottom: 3rem; max-width: 1100px; }
+#message { min-height: 1.4rem; margin: 0.75rem 1.25rem 0; color: var(--accent-dark); }
+#message.error { color: var(--danger); }
+.banner {
+  background: var(--warn-bg);
+  color: var(--warn);
+  border: 1px solid #f0ddb0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.7rem; margin-bottom: 1rem; }
+.cards article { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 0.7rem 0.8rem; }
+.cards p { margin: 0; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; }
+.cards strong { display: block; margin-top: 0.25rem; font-size: 1.35rem; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1rem; align-items: start; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 0.9rem; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: 0.5rem 0.4rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 0.75rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+tr.selected { background: #eef6f2; }
+.status { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 999px; background: #efe8dc; font-size: 0.82rem; }
+.panel { display: none; }
+.panel.active { display: block; }
+label { display: block; margin-top: 0.75rem; font-size: 0.85rem; color: var(--muted); }
+input, textarea, select {
+  width: 100%;
+  margin-top: 0.25rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: white;
+}
+textarea { min-height: 6rem; resize: vertical; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.check { display: flex; align-items: center; gap: 0.45rem; margin-top: 0.8rem; color: var(--ink); }
+.check input { width: auto; margin: 0; }
+.repeat { border-top: 1px solid var(--line); margin-top: 0.8rem; padding-top: 0.2rem; }
+.row-actions, .form-actions { display: flex; gap: 0.5rem; margin-top: 0.9rem; flex-wrap: wrap; }
+pre.packet {
+  white-space: pre-wrap;
+  background: #f7f4ee;
+  border-radius: 6px;
+  padding: 0.75rem;
+  max-height: 420px;
+  overflow: auto;
+  font: 0.86rem/1.4 ui-monospace, "Cascadia Code", monospace;
+}
+.listing { display: flex; justify-content: space-between; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--line); }
+.listing p { margin: 0.15rem 0 0; color: var(--muted); }
+a { color: var(--accent-dark); }
+@media (max-width: 800px) {
+  .layout, .grid { grid-template-columns: 1fr; }
+  header { align-items: flex-start; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <p class="eyebrow">Private on this computer</p>
+    <h1>Internship search</h1>
+  </div>
+  <button id="run-search" class="primary" type="button">Run search</button>
+</header>
+<p id="message" role="status"></p>
+<nav aria-label="Sections">
+  <button type="button" data-tab="applications" aria-selected="true">Applications</button>
+  <button type="button" data-tab="profile" aria-selected="false">Profile</button>
+  <button type="button" data-tab="listings" aria-selected="false">Listings</button>
+  <button type="button" data-tab="settings" aria-selected="false">Settings</button>
+</nav>
+<main>
+  <section id="tab-applications" class="panel active">
+    <div id="review-banner" class="banner" hidden></div>
+    <div id="stats" class="cards"></div>
+    <div class="layout">
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Score</th><th>Status</th><th>Company</th><th>Role</th><th></th></tr>
+          </thead>
+          <tbody id="application-rows"></tbody>
+        </table>
+        <p id="empty-applications">No applications yet. Press Run search after your profile looks right.</p>
+      </div>
+      <aside id="detail" class="card">
+        <h2>Application</h2>
+        <p id="detail-empty">Select an application to read the filled packet and change its status.</p>
+        <form id="detail-form" hidden>
+          <p id="detail-title"></p>
+          <p><a id="detail-link" href="" target="_blank" rel="noreferrer">Open listing</a></p>
+          <label>Status
+            <select id="detail-status"></select>
+          </label>
+          <label>Notes
+            <textarea id="detail-notes"></textarea>
+          </label>
+          <div class="form-actions">
+            <button class="primary" type="submit">Save application</button>
+          </div>
+          <h3>Filled packet</h3>
+          <pre id="detail-packet" class="packet"></pre>
+        </form>
+      </aside>
+    </div>
+  </section>
+
+  <section id="tab-profile" class="panel">
+    <form id="profile-form" class="card">
+      <h2>Resume profile</h2>
+      <p>Answers are taken from these fields. Leave experience empty if you have not had a job.</p>
+      <div class="grid">
+        <label>Full name <input id="full-name" required></label>
+        <label>Email <input id="email" type="email" required></label>
+        <label>Phone <input id="phone"></label>
+        <label>Location <input id="location"></label>
+        <label>School <input id="school"></label>
+        <label>Degree <input id="degree"></label>
+        <label>Major <input id="major"></label>
+        <label>Graduation <input id="graduation" placeholder="2027-05"></label>
+        <label>GPA <input id="gpa" placeholder="Leave blank to skip"></label>
+        <label>Earliest start <input id="start-date" placeholder="2026-05"></label>
+        <label>Term <input id="term" placeholder="Summer 2026"></label>
+        <label>Work authorization <input id="work-authorization"></label>
+        <label>Needs sponsorship
+          <select id="sponsorship">
+            <option value="">Not set</option>
+            <option value="no">No</option>
+            <option value="yes">Yes</option>
+          </select>
+        </label>
+        <label>Preferred locations <input id="preferred-locations" placeholder="Austin, Remote"></label>
+        <label>Resume file <input id="resume-path" placeholder="data/resume.pdf"></label>
+        <label>GitHub <input id="github"></label>
+        <label>LinkedIn <input id="linkedin"></label>
+        <label>Portfolio <input id="portfolio"></label>
+      </div>
+      <label>Skills, comma separated <input id="skills"></label>
+      <label>Coursework, comma separated <input id="coursework"></label>
+      <label>Interests, comma separated <input id="interests"></label>
+      <label class="check"><input id="willing-remote" type="checkbox"> Open to remote</label>
+      <label class="check"><input id="willing-relocate" type="checkbox"> Willing to relocate</label>
+      <label class="check"><input id="profile-example" type="checkbox"> This is still the sample profile</label>
+      <label class="check"><input id="profile-needs-review" type="checkbox"> I still need to review this before anything is sent</label>
+
+      <h3>Projects</h3>
+      <div id="projects"></div>
+      <div class="row-actions"><button id="add-project" class="secondary" type="button">Add project</button></div>
+
+      <h3>Experience</h3>
+      <div id="experience"></div>
+      <div class="row-actions"><button id="add-experience" class="secondary" type="button">Add experience</button></div>
+
+      <div class="form-actions"><button class="primary" type="submit">Save profile</button></div>
+    </form>
+  </section>
+
+  <section id="tab-listings" class="panel">
+    <div class="layout">
+      <form id="listing-form" class="card">
+        <h2 id="listing-heading">Add a listing</h2>
+        <input id="listing-id" type="hidden">
+        <label>Company <input id="listing-company" required></label>
+        <label>Title <input id="listing-title" required></label>
+        <label>Location <input id="listing-location"></label>
+        <label>Listing URL <input id="listing-url"></label>
+        <label>Apply email <input id="listing-email" type="email"></label>
+        <label>Description <textarea id="listing-description"></textarea></label>
+        <div class="form-actions">
+          <button class="primary" type="submit" id="save-listing">Add listing</button>
+          <button class="ghost" type="button" id="cancel-listing" hidden>Cancel edit</button>
+        </div>
+      </form>
+      <div class="card">
+        <h2>Saved listings</h2>
+        <div id="listing-rows"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-settings" class="panel">
+    <form id="settings-form" class="card">
+      <h2>Search settings</h2>
+      <label class="check"><input id="auto-apply" type="checkbox"> Email applications when a listing has an apply address</label>
+      <label class="check"><input id="intern-only" type="checkbox"> Only keep internships, co-ops, and new-grad roles</label>
+      <div class="grid">
+        <label>Minimum match score <input id="min-score" type="number" min="0" max="100" step="1"></label>
+        <label>Daily email cap <input id="daily-cap" type="number" min="0" max="100" step="1"></label>
+        <label>Google spreadsheet id <input id="sheet-id"></label>
+        <label>Worksheet name <input id="worksheet"></label>
+        <label>IMAP username <input id="imap-username" type="email"></label>
+        <label>SMTP username <input id="smtp-username" type="email"></label>
+      </div>
+      <p>Mailbox passwords stay in the IMAP_PASSWORD and SMTP_PASSWORD environment variables.</p>
+      <div class="form-actions"><button class="primary" type="submit">Save settings</button></div>
+    </form>
+  </section>
+</main>
+<script>
+const state = { data: null, selectedId: "" };
+
+function text(value) {
+  return value == null ? "" : String(value);
+}
+
+function splitComma(value) {
+  return text(value).split(",").map((part) => part.trim()).filter(Boolean);
+}
+
+function joinComma(values) {
+  return (values || []).join(", ");
+}
+
+function setMessage(message, isError) {
+  const node = document.getElementById("message");
+  node.textContent = message || "";
+  node.classList.toggle("error", Boolean(isError));
+}
+
+async function api(path, payload) {
+  const options = payload === undefined ? {} : {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  };
+  const response = await fetch(path, options);
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "Request failed.");
+  return body;
+}
+
+function showTab(name) {
+  document.querySelectorAll("nav button").forEach((button) => {
+    button.setAttribute("aria-selected", button.dataset.tab === name ? "true" : "false");
+  });
+  document.querySelectorAll(".panel").forEach((panel) => {
+    panel.classList.toggle("active", panel.id === "tab-" + name);
+  });
+}
+
+function rate(value) {
+  return value == null ? "n/a" : Number(value).toFixed(1) + "%";
+}
+
+function renderStats() {
+  const summary = state.data.summary || {};
+  const cards = [
+    ["Seen", summary.seen || 0],
+    ["Tracked", summary.tracked || 0],
+    ["Submitted", summary.submitted || 0],
+    ["Interviews", summary.interviews || 0],
+    ["Rejections", summary.rejections || 0],
+    ["Offers", summary.offers || 0],
+    ["Response", rate(summary.response_rate)],
+  ];
+  const root = document.getElementById("stats");
+  root.replaceChildren();
+  cards.forEach(([label, value]) => {
+    const article = document.createElement("article");
+    const title = document.createElement("p");
+    title.textContent = label;
+    const strong = document.createElement("strong");
+    strong.textContent = text(value);
+    article.append(title, strong);
+    root.appendChild(article);
+  });
+}
+
+function renderBanner() {
+  const profile = state.data.profile;
+  const banner = document.getElementById("review-banner");
+  if (profile.example || profile.needs_review) {
+    banner.hidden = false;
+    banner.textContent = "This profile is still a sample or marked for review, so emails will not be sent. Open Profile, edit it, and clear those checkboxes.";
+  } else {
+    banner.hidden = true;
+    banner.textContent = "";
+  }
+}
+
+function renderApplications() {
+  const rows = document.getElementById("application-rows");
+  const empty = document.getElementById("empty-applications");
+  rows.replaceChildren();
+  const applications = state.data.applications || [];
+  empty.hidden = applications.length > 0;
+  applications.forEach((application) => {
+    const row = document.createElement("tr");
+    if (application.id === state.selectedId) row.className = "selected";
+    [application.match_score.toFixed(1)].forEach((value) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    });
+    const statusCell = document.createElement("td");
+    const badge = document.createElement("span");
+    badge.className = "status";
+    badge.textContent = application.status;
+    statusCell.appendChild(badge);
+    row.appendChild(statusCell);
+    ["company", "title"].forEach((key) => {
+      const cell = document.createElement("td");
+      cell.textContent = application[key];
+      row.appendChild(cell);
+    });
+    const action = document.createElement("td");
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ghost";
+    button.textContent = "Open";
+    button.addEventListener("click", () => openApplication(application.id));
+    action.appendChild(button);
+    row.appendChild(action);
+    rows.appendChild(row);
+  });
+}
+
+function fillStatusOptions(current) {
+  const select = document.getElementById("detail-status");
+  select.replaceChildren();
+  const statuses = new Set(state.data.statuses || []);
+  if (current) statuses.add(current);
+  [...statuses].sort().forEach((status) => {
+    const option = document.createElement("option");
+    option.value = status;
+    option.textContent = status;
+    select.appendChild(option);
+  });
+  select.value = current || "";
+}
+
+async function openApplication(id) {
+  state.selectedId = id;
+  renderApplications();
+  const detail = await api("/api/applications/" + encodeURIComponent(id));
+  document.getElementById("detail-empty").hidden = true;
+  document.getElementById("detail-form").hidden = false;
+  document.getElementById("detail-title").textContent = detail.company + " — " + detail.title;
+  const link = document.getElementById("detail-link");
+  link.href = detail.url || "#";
+  link.hidden = !detail.url;
+  fillStatusOptions(detail.status);
+  document.getElementById("detail-notes").value = detail.notes || "";
+  document.getElementById("detail-packet").textContent = detail.packet || "";
+}
+
+function field(id) {
+  return document.getElementById(id);
+}
+
+function fillProfile() {
+  const profile = state.data.profile;
+  field("full-name").value = profile.full_name || "";
+  field("email").value = profile.email || "";
+  field("phone").value = profile.phone || "";
+  field("location").value = profile.location || "";
+  field("school").value = profile.school || "";
+  field("degree").value = profile.degree || "";
+  field("major").value = profile.major || "";
+  field("graduation").value = profile.graduation_date || "";
+  field("gpa").value = profile.gpa || "";
+  field("start-date").value = profile.start_date || "";
+  field("term").value = profile.term || "";
+  field("work-authorization").value = profile.work_authorization || "";
+  field("sponsorship").value = profile.needs_sponsorship === true ? "yes" : profile.needs_sponsorship === false ? "no" : "";
+  field("preferred-locations").value = joinComma(profile.preferred_locations);
+  field("resume-path").value = profile.resume_path || "";
+  field("github").value = (profile.links || {}).github || "";
+  field("linkedin").value = (profile.links || {}).linkedin || "";
+  field("portfolio").value = (profile.links || {}).portfolio || "";
+  field("skills").value = joinComma(profile.skills);
+  field("coursework").value = joinComma(profile.coursework);
+  field("interests").value = joinComma(profile.interests);
+  field("willing-remote").checked = Boolean(profile.willing_remote);
+  field("willing-relocate").checked = Boolean(profile.willing_to_relocate);
+  field("profile-example").checked = Boolean(profile.example);
+  field("profile-needs-review").checked = Boolean(profile.needs_review);
+  renderRepeats("projects", profile.projects || [], projectFields);
+  renderRepeats("experience", profile.experience || [], experienceFields);
+}
+
+function projectFields(project) {
+  return [
+    ["Project name", "name", project.name || "", "input"],
+    ["Description", "description", project.description || "", "textarea"],
+    ["Technologies", "technologies", joinComma(project.technologies), "input"],
+    ["URL", "url", project.url || "", "input"],
+  ];
+}
+
+function experienceFields(role) {
+  return [
+    ["Company", "company", role.company || "", "input"],
+    ["Title", "title", role.title || "", "input"],
+    ["Start", "start", role.start || "", "input"],
+    ["End", "end", role.end || "", "input"],
+    ["Description", "description", role.description || "", "textarea"],
+  ];
+}
+
+function renderRepeats(containerId, items, fieldsFor) {
+  const root = document.getElementById(containerId);
+  root.replaceChildren();
+  items.forEach((item) => root.appendChild(repeatBlock(containerId, fieldsFor(item))));
+}
+
+function repeatBlock(containerId, fields) {
+  const block = document.createElement("div");
+  block.className = "repeat";
+  fields.forEach(([label, key, value, kind]) => {
+    const wrapper = document.createElement("label");
+    wrapper.textContent = label;
+    const input = document.createElement(kind === "textarea" ? "textarea" : "input");
+    input.dataset.key = key;
+    input.value = value;
+    wrapper.appendChild(input);
+    block.appendChild(wrapper);
+  });
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "ghost";
+  remove.textContent = "Remove";
+  remove.addEventListener("click", () => block.remove());
+  const actions = document.createElement("div");
+  actions.className = "row-actions";
+  actions.appendChild(remove);
+  block.appendChild(actions);
+  return block;
+}
+
+function collectRepeats(containerId) {
+  return [...document.getElementById(containerId).querySelectorAll(".repeat")].map((block) => {
+    const record = {};
+    block.querySelectorAll("[data-key]").forEach((input) => {
+      record[input.dataset.key] = input.value.trim();
+    });
+    return record;
+  });
+}
+
+function profilePayload() {
+  const sponsorship = field("sponsorship").value;
+  const projects = collectRepeats("projects").filter((project) => project.name).map((project) => ({
+    name: project.name,
+    description: project.description,
+    technologies: splitComma(project.technologies),
+    url: project.url,
+  }));
+  const experience = collectRepeats("experience").filter((role) => role.company || role.title);
+  return {
+    full_name: field("full-name").value.trim(),
+    email: field("email").value.trim(),
+    phone: field("phone").value.trim(),
+    location: field("location").value.trim(),
+    school: field("school").value.trim(),
+    degree: field("degree").value.trim(),
+    major: field("major").value.trim(),
+    graduation_date: field("graduation").value.trim(),
+    gpa: field("gpa").value.trim(),
+    start_date: field("start-date").value.trim(),
+    term: field("term").value.trim(),
+    work_authorization: field("work-authorization").value.trim(),
+    needs_sponsorship: sponsorship === "yes" ? true : sponsorship === "no" ? false : null,
+    preferred_locations: splitComma(field("preferred-locations").value),
+    resume_path: field("resume-path").value.trim(),
+    links: {
+      github: field("github").value.trim(),
+      linkedin: field("linkedin").value.trim(),
+      portfolio: field("portfolio").value.trim(),
+    },
+    skills: splitComma(field("skills").value),
+    coursework: splitComma(field("coursework").value),
+    interests: splitComma(field("interests").value),
+    willing_remote: field("willing-remote").checked,
+    willing_to_relocate: field("willing-relocate").checked,
+    example: field("profile-example").checked,
+    needs_review: field("profile-needs-review").checked,
+    projects,
+    experience,
+    saved_answers: (state.data.profile.saved_answers || []),
+  };
+}
+
+function renderListings() {
+  const root = document.getElementById("listing-rows");
+  root.replaceChildren();
+  const listings = state.data.listings || [];
+  if (!listings.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "No listings yet. Add one on the left, or keep the sample file.";
+    root.appendChild(empty);
+    return;
+  }
+  listings.forEach((listing, index) => {
+    const item = document.createElement("article");
+    item.className = "listing";
+    const copy = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = listing.company + " — " + listing.title;
+    const meta = document.createElement("p");
+    meta.textContent = [listing.location, listing.apply_email].filter(Boolean).join(" · ");
+    copy.append(title, meta);
+    const actions = document.createElement("div");
+    const edit = document.createElement("button");
+    edit.type = "button";
+    edit.className = "ghost";
+    edit.textContent = "Edit";
+    edit.addEventListener("click", () => startListingEdit(listing));
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "danger";
+    remove.textContent = "Delete";
+    remove.addEventListener("click", () => deleteListing(index));
+    actions.append(edit, remove);
+    item.append(copy, actions);
+    root.appendChild(item);
+  });
+}
+
+function startListingEdit(listing) {
+  field("listing-id").value = listing.id || "";
+  field("listing-company").value = listing.company || "";
+  field("listing-title").value = listing.title || "";
+  field("listing-location").value = listing.location || "";
+  field("listing-url").value = listing.url || "";
+  field("listing-email").value = listing.apply_email || "";
+  field("listing-description").value = listing.description || "";
+  field("listing-heading").textContent = "Edit listing";
+  field("save-listing").textContent = "Save listing";
+  field("cancel-listing").hidden = false;
+}
+
+function resetListingForm() {
+  document.getElementById("listing-form").reset();
+  field("listing-id").value = "";
+  field("listing-heading").textContent = "Add a listing";
+  field("save-listing").textContent = "Add listing";
+  field("cancel-listing").hidden = true;
+}
+
+async function persistListings(listings, message) {
+  const result = await api("/api/listings", { jobs: listings });
+  state.data.listings = result.listings;
+  renderListings();
+  resetListingForm();
+  setMessage(message, false);
+}
+
+async function deleteListing(index) {
+  const listings = state.data.listings.slice();
+  listings.splice(index, 1);
+  await persistListings(listings, "Listing removed.");
+}
+
+function fillSettings() {
+  const settings = state.data.settings;
+  field("auto-apply").checked = Boolean(settings.auto_apply_email);
+  field("intern-only").checked = settings.require_intern_signal !== false;
+  field("min-score").value = settings.min_match_score;
+  field("daily-cap").value = settings.daily_apply_cap;
+  field("sheet-id").value = settings.spreadsheet_id || "";
+  field("worksheet").value = settings.worksheet || "Applications";
+  field("imap-username").value = settings.imap_username || "";
+  field("smtp-username").value = settings.smtp_username || "";
+}
+
+async function refresh() {
+  state.data = await api("/api/bootstrap");
+  renderBanner();
+  renderStats();
+  renderApplications();
+  fillProfile();
+  renderListings();
+  fillSettings();
+}
+
+document.querySelectorAll("nav button").forEach((button) => {
+  button.addEventListener("click", () => showTab(button.dataset.tab));
+});
+
+document.getElementById("profile-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await api("/api/profile", profilePayload());
+    await refresh();
+    setMessage("Profile saved.", false);
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+});
+
+document.getElementById("add-project").addEventListener("click", () => {
+  document.getElementById("projects").appendChild(repeatBlock("projects", projectFields({})));
+});
+
+document.getElementById("add-experience").addEventListener("click", () => {
+  document.getElementById("experience").appendChild(repeatBlock("experience", experienceFields({})));
+});
+
+document.getElementById("listing-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const listing = {
+    id: field("listing-id").value,
+    company: field("listing-company").value.trim(),
+    title: field("listing-title").value.trim(),
+    location: field("listing-location").value.trim(),
+    url: field("listing-url").value.trim(),
+    apply_email: field("listing-email").value.trim(),
+    description: field("listing-description").value.trim(),
+  };
+  const listings = (state.data.listings || []).slice();
+  const existing = listings.findIndex((item) => item.id && item.id === listing.id);
+  if (existing >= 0) listings[existing] = listing;
+  else listings.push(listing);
+  try {
+    await persistListings(listings, existing >= 0 ? "Listing updated." : "Listing added.");
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+});
+
+document.getElementById("cancel-listing").addEventListener("click", resetListingForm);
+
+document.getElementById("settings-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const result = await api("/api/settings", {
+      auto_apply_email: field("auto-apply").checked,
+      require_intern_signal: field("intern-only").checked,
+      min_match_score: Number(field("min-score").value),
+      daily_apply_cap: Number(field("daily-cap").value),
+      spreadsheet_id: field("sheet-id").value.trim(),
+      worksheet: field("worksheet").value.trim(),
+      imap_username: field("imap-username").value.trim(),
+      smtp_username: field("smtp-username").value.trim(),
+    });
+    state.data.settings = result.settings;
+    setMessage("Settings saved.", false);
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+});
+
+document.getElementById("detail-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!state.selectedId) return;
+  try {
+    const result = await api("/api/applications/" + encodeURIComponent(state.selectedId), {
+      status: field("detail-status").value,
+      notes: field("detail-notes").value,
+    });
+    state.data.summary = result.summary;
+    const index = state.data.applications.findIndex((item) => item.id === result.application.id);
+    if (index >= 0) state.data.applications[index] = result.application;
+    renderStats();
+    renderApplications();
+    setMessage("Application updated.", false);
+  } catch (error) {
+    setMessage(error.message, true);
+  }
+});
+
+document.getElementById("run-search").addEventListener("click", async () => {
+  const button = document.getElementById("run-search");
+  button.disabled = true;
+  button.textContent = "Running…";
+  setMessage("Searching listings and updating applications.", false);
+  try {
+    const result = await api("/api/run", {});
+    await refresh();
+    const errors = (result.errors || []).length ? " " + result.errors.join(" ") : "";
+    setMessage(
+      "Seen " + result.discovered + " listings. Prepared " + result.new_applications +
+      " new applications. Emailed " + result.sent + "." + errors,
+      Boolean(errors)
+    );
+    showTab("applications");
+  } catch (error) {
+    setMessage(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Run search";
+  }
+});
+
+refresh().catch((error) => setMessage(error.message, true));
+</script>
+</body>
+</html>
