@@ -3,12 +3,12 @@ from random import random
 
 class Server:
 # basic s
-    def __init__(self, fail_likelihood, processing_speed, cache={}, processing_attempts = 0, server_id = None, online = True, requests_processed = 0):
+    def __init__(self, fail_likelihood, processing_speed, cache=None, processing_attempts = 0, server_id = None, online = True, requests_processed = 0):
         self.server_id = server_id
         if server_id == None:
             self.server_id = randomid()
         self.online = online
-        self.cache = cache
+        self.cache = cache if cache is not None else {}
         self.requests_processed = requests_processed
         self.processing_attempts = processing_attempts
         self.fail_likelihood = fail_likelihood
@@ -36,7 +36,6 @@ class Server:
                 self.cache[request.endpoint] = 1
                 request.mark_completed()
                 self.requests_processed += 1
-                self.processing_attempts += 1
         else:
             if self.can_process():
                 request.mark_completed()
@@ -44,23 +43,8 @@ class Server:
                 pass
     
     def process_queue(self, queue):
-        if queue.is_empty():
-            pass
-        else:
+        while not queue.is_empty():
             request = queue.dequeue()
-            self.process_request(request) 
-            if request.status == "Completed" or request.status == "Failed":
-                pass
-            elif request.status == "Retrying":
+            self.process_request(request)
+            if request.status == "Retrying":
                 queue.enqueue(request)
-            return self.process_queue(queue)
-    
-
-
-
-
-
-
-
-
-    
